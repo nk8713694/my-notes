@@ -1,0 +1,466 @@
+Implementing Category Module
+================================
+Step 1: Create a Category.jsp page in the view folder of WEB-INF directory. This is the view page which will interact with the client.
+
+Category.jsp
+==================
+<%@ page language="java" contentType="text/html"%>
+<%@ include file="CommonHeader.jsp"%>
+
+<div class="container">
+
+	<br />
+	<br />
+	
+	<div class="row">
+		<div style="width: 20%"></div>
+		<div>
+			<form action="InsertCategory" method="post">
+				<table width="50%" align="center" class="table table-bordered">
+					<tr>
+						<td colspan="2">Manage Category</td>
+					</tr>
+					<tr>
+						<td>Category Name</td>
+						<td><input type="text" name="catName" /></td>
+					</tr>
+					<tr>
+						<td>Category Desc</td>
+						<td><input type="text" name="catDesc" /></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<center>
+								<input type="submit" value="Insert Category" class="btn btn-success" />
+							</center>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div></div>
+	</div>
+
+	<table class="table table-bordered">
+		<tr bgcolor="orange">
+			<td colspan="4">
+				<center>
+					<h3>Category Information</h3>
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>Category Id</td>
+			<td>Category Name</td>
+			<td>Category Desc</td>
+			<td>Operation</td>
+		</tr>
+		<c:forEach items="${categoryList}" var="category">
+			<tr>
+				<td>${category.categoryId}</td>
+				<td>${category.categoryName}</td>
+				<td>${category.categoryDesc}</td>
+				<td>
+					<a href="<c:url value="/deleteCategory/${category.categoryId}"/>">DELETE</a>
+					&nbsp;&nbsp;/&nbsp;&nbsp;
+					<a href="<c:url value="/editCategory/${category.categoryId}"/>">EDIT</a>
+				</td>
+			</tr>
+		</c:forEach>
+	</table>
+	
+</div>
+
+
+</body>
+</html>
+
+Step 2: Create a CategoryController.java file with in the com.ecomm.controller package. This file will work as a Controller and take the data from the View page i.e from Category.jsp page and send it to CategoryDAO to do all the CRUD operation.
+
+CategoryController.java
+======================
+package com.ecomm.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ecomm.dao.CategoryDAO;
+import com.ecomm.model.Category;
+
+@Controller
+public class CategoryController 
+{
+	@Autowired
+	CategoryDAO categoryDAO;
+
+	@RequestMapping("/category")
+	public String showCategoryPage(Model m)
+	{
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", categoryList);
+		return "Category";
+	}
+	
+	@RequestMapping(value="/InsertCategory",method=RequestMethod.POST)
+	public String insertCategory(@RequestParam("catName")String categoryName,@RequestParam("catDesc")String categoryDesc,Model m)
+	{
+		Category category=new Category();
+		category.setCategoryName(categoryName);
+		category.setCategoryDesc(categoryDesc);
+		
+		categoryDAO.addCategory(category);
+		
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", categoryList);
+		
+		return "Category";
+	}
+	
+	@RequestMapping(value="/UpdateCategory",method=RequestMethod.POST)
+	public String updateCategory(@RequestParam("catId")int categoryId,@RequestParam("catName")String categoryName,@RequestParam("catDesc")String categoryDesc,Model m)
+	{
+		Category category=categoryDAO.getCategory(categoryId);
+		
+		category.setCategoryName(categoryName);
+		category.setCategoryDesc(categoryDesc);
+		
+		categoryDAO.updateCategory(category);
+		
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", categoryList);
+		
+		return "Category";
+	}
+	
+	@RequestMapping("/deleteCategory/{categoryId}")
+	public String deleteCategory(@PathVariable("categoryId")int categoryId,Model m)
+	{
+		Category category=categoryDAO.getCategory(categoryId);
+		categoryDAO.deleteCategory(category);
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", categoryList);
+		return "Category";
+	}
+	
+	@RequestMapping("/editCategory/{categoryId}")
+	public String editCategory(@PathVariable("categoryId")int categoryId,Model m)
+	{
+		Category category=categoryDAO.getCategory(categoryId);
+		m.addAttribute("category", category);
+		return "UpdateCategory";
+	}
+}
+
+Step 3 : Create a JSP page called UpdateCategory.jsp page.
+
+<%@ page language="java" contentType="text/html"%>
+<%@ include file="CommonHeader.jsp"%>
+
+<div class="container">
+	<br />
+	<br />
+	
+	<div class="row">
+		<div style="width: 20%"></div>
+		<div>
+			<form action="<c:url value="/UpdateCategory"/>" method="post">
+				<table width="50%" align="center" class="table table-bordered">
+					<tr>
+						<td colspan="2">Manage Category</td>
+					</tr>
+					<tr>
+						<td>Category Id</td>
+						<td><input type="text" name="catId" value="${category.categoryId}" readonly/></td>
+					</tr>
+					<tr>
+						<td>Category Name</td>
+						<td><input type="text" name="catName" value="${category.categoryName}"/></td>
+					</tr>
+					<tr>
+						<td>Category Desc</td>
+						<td><input type="text" name="catDesc" value="${category.categoryDesc}"/></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<center>
+								<input type="submit" value="Update Category" class="btn btn-success" />
+							</center>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div></div>
+	</div>
+</div>
+</body>
+</html>
+
+Spring Form
+=====================
+- Spring form is just like a normal html form but here the implementation of the form can be in the server side.
+
+- A common html form is nothing but combination of certain user components like TextField , TetArea , Label , Button , ComboBox , List  etc.
+
+- Spring form also contain the same kind of component but with programmatic validation can be inbuilt with this components.
+
+- To implement the Spring form we need to implement the Spring form tags to our jsp as like the JSTL (Java Standard Tag Library).
+
+- To add the Spring form to our jsp page we need to add the following tag.
+
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %> 
+
+- The following are some of the Spring form tags which we can use just like the Html form.
+
+form:form	It is a container tag that contains all other form tags.
+form:input	This tag is used to generate the text field.
+form:radiobutton	This tag is used to generate the radio buttons.
+form:checkbox	This tag is used to generate the checkboxes.
+form:password	This tag is used to generate the password input field.
+form:select	This tag is used to generate the drop-down list.
+form:textarea	This tag is used to generate the multi-line text field.
+form:hidden	This tag is used to generate the hidden input field.
+
+- Like we have <form>  tag in case of html we can have the similar kind of form tag available in spring form also.
+
+<form:form action="nextFormPath" modelAttribute=?abc?>  
+
+- Here action denotes what is the functionality or we can also specify here the mapping url of the controller.
+
+- modelAttribute is the property which will take the name of the bean which the form will be associated to.  It means each spring form will be associated to a form bean so that we need not to explicitely create an instance of the object.
+
+form:input
+================
+- Here form:input is the tag for implementing the textfield type of component to write the syntax is
+
+<form:input path="productId"/>
+
+- Internally it will be rendered to the <input type="text"> It does not required any <form> tag.
+
+
+Product Module Implementation
+====================================
+Step 1: Create a Product.jsp Page
+
+<%@ page language="java" contentType="text/html"%>
+<%@ include file="CommonHeader.jsp"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %> 
+
+<div class="container">
+
+	<br />
+	<br />
+	
+
+<form:form action="insertProduct" modelAttribute="product" method="post">
+	<table class="table table-bordered">
+		<tr>
+			<td colspan="2">
+				<center>
+					Product Information
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>Product Name</td>
+			<td> <form:input path="productName"/></td>
+		</tr>
+		<tr>
+			<td>Product Desc</td>
+			<td> <form:textarea path="productDesc"/></td>
+		</tr>
+		<tr>
+			<td>Category</td>
+			<td> 
+				<form:select path="categoryId">
+					<form:option value="0" label="--Select List--"/>
+					<form:options items="${categoryList}"/>
+				</form:select>
+			</td>
+		</tr>
+		<tr>
+			<td>Supplier</td>
+			<td> <form:input path="supplierId"/></td>
+		</tr>
+		<tr>
+			<td>Price</td>
+			<td> <form:input path="price"/></td>
+		</tr>
+		<tr>
+			<td>Stock</td>
+			<td> <form:input path="stock"/></td>
+		</tr>
+		<tr>
+			<td colspan="2"> 
+				<center>
+				<input type="submit" value="Insert Product" class="btn btn-success"/>
+				</center>
+			</td>
+		</tr>
+	
+	</table>
+</form:form>
+
+<table class="table table-bordered">
+		<tr bgcolor="orange">
+			<td colspan="7">
+				<center>
+					<h4>Product Information</h4>
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>Product Id</td>
+			<td>Product Name</td>
+			<td>Category</td>
+			<td>Supplier</td>
+			<td>Stock</td>
+			<td>Price</td>
+			<td>Operation</td>
+		</tr>
+		<c:forEach items="${productList}" var="product">
+			<tr>
+				<td>${product.productId}</td>
+				<td>${product.productName}</td>
+				<td>${product.categoryId}</td>
+				<td>${product.supplierId}</td>
+				<td>${product.stock}</td>
+				<td>${product.price}</td>
+				<td>
+					<a href="<c:url value="/deleteProduct/${product.productId}"/>">DELETE</a>
+					&nbsp;&nbsp;/&nbsp;&nbsp;
+					<a href="<c:url value="/editProduct/${product.productId}"/>">EDIT</a>
+				</td>
+			</tr>
+		</c:forEach>
+	</table>
+	
+
+
+</div>
+</body>
+</html>
+
+Step 2 : Create a ProductController.java 
+
+package com.ecomm.controller;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.ecomm.dao.CategoryDAO;
+import com.ecomm.dao.ProductDAO;
+import com.ecomm.model.Category;
+import com.ecomm.model.Product;
+
+@Controller
+public class ProductController 
+{
+	@Autowired
+	ProductDAO productDAO;
+	
+	@Autowired
+	CategoryDAO categoryDAO;
+	
+	@RequestMapping("/product")
+	public String showProductPage(Model m)
+	{
+		Product product=new Product();
+		m.addAttribute("product", product);
+		
+		List<Product> productList=productDAO.productList();
+		m.addAttribute("productList", productList);
+		
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", this.getCategoryList(categoryList));
+		
+		return "Product";
+	}
+	
+	public LinkedHashMap<Integer,String> getCategoryList(List<Category> categoryList)
+	{
+		LinkedHashMap<Integer,String> categoryMapList=new LinkedHashMap<Integer,String>();
+		
+		int i=0;
+		
+		while(i<categoryList.size())
+		{
+			Category category=categoryList.get(i);
+			categoryMapList.put(category.getCategoryId(),category.getCategoryName());
+			i++;
+		}
+		
+		return categoryMapList;
+	}
+
+	@RequestMapping(value="/insertProduct",method=RequestMethod.POST)
+	public String insertProduct(@ModelAttribute("product")Product product,Model m)
+	{
+		
+		productDAO.addProduct(product);
+		
+		List<Product> productList=productDAO.productList();
+		m.addAttribute("productList", productList);
+		
+		Product product1=new Product();
+		m.addAttribute("product", product1);
+		
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", this.getCategoryList(categoryList));
+		
+		return "Product";
+	}
+	
+	@RequestMapping(value="/deleteProduct/{productId}")
+	public String deleteProduct(@PathVariable("productId")int productId,Model m)
+	{
+		Product product=productDAO.getProduct(productId);
+		productDAO.deleteProduct(product);
+		
+		List<Product> productList=productDAO.productList();
+		m.addAttribute("productList", productList);
+		
+		Product product1=new Product();
+		m.addAttribute("product", product1);
+		
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", this.getCategoryList(categoryList));
+		
+		return "Product";
+	}
+	
+	@RequestMapping(value="/editProduct/{productId}")
+	public String editProduct(@PathVariable("productId")int productId,Model m)
+	{
+		Product product=productDAO.getProduct(productId);
+		
+		List<Product> productList=productDAO.productList();
+		m.addAttribute("productList", productList);
+		
+		m.addAttribute("product", product);
+		
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", this.getCategoryList(categoryList));
+		
+		return "Product";
+	}
+}
+
+
+ 

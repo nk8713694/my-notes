@@ -1,0 +1,316 @@
+Implementing Spring Security
+===============================
+- Any web application requires a security implementation to restrict the intruder.
+
+- When we ever talk about the security we come across two main things they are
+
+1.Authentication			2.Authorization
+
+1.Authentication
+====================
+- Basically it specifies the user should be valid as per the application.
+
+- It talks about the identity.
+
+Ex : Username and Password, Biometric Devices , OTP , Smart Card.
+
+2.Authorization
+==================
+- Basically it specifies about the modules which can be accessible to a certain user and which can applied to other user.
+
+Ex : User , Admin , Guest
+
+- Here role wise we can seggregate the application which has to be used.
+
+- To implement the security to the web application we need to use the spring security.
+
+- Spring security we implement for specify the web level security to the JAVA EE based application.
+
+Steps for Implementing Spring Security
+=======================================
+Step 1: Add the dependencies required for the spring security
+
+- There are three major spring security dependencies which we need to add they are
+
+1.Spring-Security-Core		2.Spring-Security-Web		3.Spring-Security-Config
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>5.0.8.RELEASE</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>5.0.8.RELEASE</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>5.0.8.RELEASE</version>
+		</dependency>
+
+Step 2: Add the Security Filter in web.xml file
+
+- Filter is just like a servlet which will take the request from the user filter that particular request and send it to the appropriate resource and get the response and send it to the client by compressing it.
+
+- To implement the spring security we need to add the spring security filter into the web.xml file.
+
+- This filter will allow any web url request which is coming to the application need to be gone through the spring security filter.
+
+<filter>
+	<filter-name>springSecurityFilterChain</filter-name>
+	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+</filter>
+<filter-mapping>
+	<filter-name>springSecurityFilterChain</filter-name>
+	<url-pattern>/*</url-pattern>
+</filter-mapping>
+
+Step 3: Configure SpringSecurity.xml file (SpringSecurity.xml)
+
+- We need to add the SpringSecurity.xml configuration file which we can add it to the existing xml file or we can create separate xml file also.
+
+- Here in this xml file we will be specifying two major things
+
+1. Http Section
+
+2. AuthenticationManager Section
+
+SpringSecurity.xml
+==========================
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security.xsd">
+
+<security:http auto-config="true" use-expressions="true">
+<security:form-login login-page="/login" 
+	default-target-url="/" 
+	login-processing-url="/perform_login" 
+	authentication-failure-url="/login"
+	authentication-success-forward-url="/login_success" />
+<security:logout logout-success-url="/login" logout-url="/perform_logout"/>
+<security:csrf disabled="true" />
+</security:http>
+
+<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></beans:bean>
+
+<security:authentication-manager>
+	<security:authentication-provider>
+	<password-encoder ref="encoder" />
+	<security:jdbc-user-service
+				data-source-ref="dataSource"
+				users-by-username-query="select username,password,enabled from UserDetail where username=?"
+				authorities-by-username-query="select username, role from UserDetail where username =?" />
+	</security:authentication-provider>
+</security:authentication-manager>
+
+
+</beans:beans>
+
+Step 4 : We need to create a Login.jsp File which will call to the Spring Security filter.
+
+<%@ page language="java" contentType="text/html"%>
+<%@ include file="CommonHeader.jsp" %>
+<link rel="stylesheet" href="<c:url value="/resources/css/MyCSS.css"/>"/>
+
+<div class="container" style="margin-top:40px">
+		<div class="row">
+			<div class="col-sm-6 col-md-4 col-md-offset-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong> Sign in to continue</strong>
+					</div>
+					<div class="panel-body">
+						<form role="form" action="perform_login" method="post">
+							<fieldset>
+								<div class="row">
+									<div class="center-block">
+										<img class="profile-img"
+											src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120" alt="">
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12 col-md-10  col-md-offset-1 ">
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-user"></i>
+												</span> 
+												<input class="form-control" placeholder="Username" name="username" type="text" autofocus>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-lock"></i>
+												</span>
+												<input class="form-control" placeholder="Password" name="password" type="password" value="">
+											</div>
+										</div>
+										<div class="form-group">
+											<input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign in">
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+					<div class="panel-footer ">
+						Don't have an account! <a href="register" onClick=""> Sign Up Here </a>
+					</div>
+                </div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+
+Step 5 : Implement the UserController.java file which works as a Controller.
+
+UserController.java
+====================
+package com.ecomm.controller;
+
+import java.util.Collection;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.ecomm.dao.CategoryDAO;
+import com.ecomm.dao.ProductDAO;
+import com.ecomm.model.Category;
+import com.ecomm.model.Product;
+
+@Controller
+public class UserController 
+{
+	
+	@Autowired
+	ProductDAO productDAO;
+	
+	@Autowired
+	CategoryDAO categoryDAO;
+	
+	@RequestMapping(value="/login_success")
+	public String loginSuccess(HttpSession session,Model m)
+	{
+		String page="";
+
+		//This boolean variable will let us know whether the user is logged in
+		boolean loggedIn=false;
+		
+		//This object will contain the logged in user detail like username and role.
+		SecurityContext sContext=SecurityContextHolder.getContext();
+		Authentication authentication=sContext.getAuthentication();
+		
+		String username=authentication.getName();
+		
+		//Getting all the roles associated with the user
+		Collection<GrantedAuthority> roles=(Collection<GrantedAuthority>)authentication.getAuthorities();
+				
+		for(GrantedAuthority role:roles)
+		{
+					String role_name=role.getAuthority();
+					session.setAttribute("role",role_name);
+					if(role_name.equals("ROLE_ADMIN"))
+					{
+						loggedIn=true;
+						session.setAttribute("loggedIn", loggedIn);
+						session.setAttribute("username", username);
+						page="AdminHome";
+					}
+					else
+					{
+						loggedIn=true;
+						session.setAttribute("loggedIn", loggedIn);
+						session.setAttribute("username", username);
+						List<Product> productList=productDAO.productList();
+						m.addAttribute("productList", productList);
+								
+						List<Category> categoryList=categoryDAO.listCategories();
+						m.addAttribute("categoryList",categoryList);
+						page="ProductHome";
+					}
+		}
+		
+		return page;
+	}
+	
+	@RequestMapping(value="/perform_logout")
+	public String logout(HttpSession session)
+	{
+		session.invalidate();
+		return "Login";
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

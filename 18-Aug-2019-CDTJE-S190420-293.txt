@@ -1,0 +1,483 @@
+JSP - Java Server Pages
+===========================
+- This is also a web technology by which we can create dynamic web application like servlet.
+
+- JSP file will look like a html page and it will contain the dynamic and static content.
+
+- JSP page have different components.
+
+1. Directives		2.Scriplets		3.JSP Action Tags		4.Built in Objects
+
+- Using JSP we can separate the designing and the development.
+
+Advantages of JSP over Servlet
+==============================
+
+1. Extension to the Servlet 	: JSP technology is the extension to the servlet technology. We can use all the features of the servlet in JSP.
+
+	- JSP converts to a servlet internally. It means if we are creating a index.jsp page then it converts and index_jsp.java as servlet.
+
+2. Easy to maintain		: JSP can easily managed because of separate of designing and developing of code. In servlet designing and developing code we 	
+	need to write with in the same block itself.
+
+3. Fast Development		: In case of JSP if we are changing any code then we need not to recompile and deploy. We can refresh the page and then the 	
+	new changes will be reflected.
+
+4. Less Code			: JSP has less code to write because of JSTL, Custom Tags , Expression Language.
+
+
+
+1. Directives
+====================
+- The JSP directives are the messages that tells the web container how to translate the JSP page into the corresponding Servlet.
+
+- There are three directives which are available in the JSP page they are
+
+1. Page 		2.Include		3.Taglib
+
+Syntax
+==========
+<%@directive_name property=value,......%>
+
+1.Page
+============
+- This particular directive defines the attributes which will apply to the entire JSP page.
+
+- These are the basic information which we are adding to the JSP Page.
+
+- Some of the attributes which are available they are
+
+1. contentType		2.language		3.import		4.errorPage		5.isErrorPage		6.session etc
+
+
+1.contentType 	: This attributes defines the MIME(Multipurpose Internet Mail Extension) . It is the type of response which is sent to the client.
+
+		: Mostly this will be text/html or image/jpg.
+
+2.language	: Which specifies which language the JSP page will use it is everytime java as JSP only supprot java langauge.
+
+3.import	: This attributes is used to import the packages whose classes are used in JSP.
+
+4.errorPage	: This particular attribute is used for specifying what is the error page.
+
+5.isErrorPage	: This attribute specifies whether the current JSP page is an error page. This will accept the boolean value.
+
+6.session	: This attributes specifies whether it need to maintain the session or not.
+
+Syntax
+=========
+<%@page language="java" contentType="text/html" import="java.sql.*"%>
+
+2.include
+=================
+- This particular directive is used to include the contents of any resource it may be jsp file or html or it can be a text file.
+
+- This particular directive includes the original content of the resource at page translation time.
+
+- It is better to include static file instead the dynamic page.
+
+- This particular directive is used basically for implementing master page concept.
+
+Syntax
+=======
+<%@include file="commonHeader.jsp"%>
+
+3.Taglib
+=============
+- This particular directive is used to include the JSTL (Java Standard Tag Library) or our own custom tags into the JSP.
+
+Syntax
+==========
+<%@taglib uri="path_of_tld" prefix="string"%>
+
+
+2.Scriplets
+===================
+- Scriplets are basically the components where we can write the java code in JSP page.
+
+- There are three different kind of scriplets which are available they are
+
+1. Scriplet 			2.Expression Scriplet			3.Declaration Scriplet
+
+
+1.Declaration Scriplet
+=======================
+- This particular is used for declaring certain global variables for the JSP page.
+
+- This particular code will be written before the _jspService() method in JSP converted Servlet.
+
+Syntax
+=========
+<%!
+//code goes here
+%>
+
+2.Scriplet
+==============
+- This particular component is used for adding java code and this part of the code will be added into the _jspService() method.
+
+Syntax
+<%
+//code goes here
+%>
+
+3.Expression Scriplet
+======================
+- Expression scriplet code will be directly written to the output stream.
+
+- All the expression can be written here which has to directly print.
+
+<%= expression %>
+
+Demo : Implementing Scriplets
+================================
+<%@ page language="java" contentType="text/html" import="java.sql.*"%>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+<h3>Declaration Scriplet</h3>
+<%!
+	Connection conn;
+	ResultSet rs;
+%>
+
+<h3>Scriplet</h3>
+
+<%
+	java.util.Date currentDate=new java.util.Date();
+	out.println("Today:"+currentDate);
+%>
+
+<h3>Expression Scriplet</h3>
+
+100+201= <%=(100+201)%>
+
+</body>
+</html>
+
+include Directive
+====================
+
+Demo : Implementing include Directive
+============================================
+CommonHeader.jsp
+==================
+<%@ page language="java" contentType="text/html"%>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+<table>
+		<tr>
+			<td><img src="" width="" height=""/></td>
+			<td><center><h2>BlueSky Infotech</h2><h5>Information Lives Here</h5></center>
+		</tr>
+		<tr>
+			<td>
+				<a href="index.jsp">Home</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="Login.jsp">Login</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="Register.jsp">Register</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="ScripletDemo.jsp">Scriplet</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+			</td>
+		</tr>
+</table>
+
+
+Login.jsp
+=============
+<%@ page language="java" contentType="text/html"%>
+<%@include file="CommonHeader.jsp" %>
+
+<form action="Register" method="get">
+<table align="center" cellspacing="4">
+	<tr bgcolor="gray">
+		<td colspan="2"><h3 align="center">Sign Up Here</h3></td>
+	</tr>
+	<tr>
+	<td>User Name</td><td><input type="text" name="uname" required/></td>
+	</tr>
+	<tr>	
+	<td>Password</td><td><input type="password" name="passwd" required/></td>
+	</tr>
+	
+	<tr bgcolor="gray">
+	<td colspan="2">
+	<center>
+	<input type="submit" value="SUBMIT"/>&nbsp;&nbsp;<input type="reset" value="RESET"/>
+	</center>
+	</td>
+	</tr>
+
+</table>
+</form>
+
+</body>
+</html>
+
+MVC (Model View Controller) Architecture using Servlet and JSP
+====================================================================
+
+1. Model View Controller architecture is the design pattern which can be used in different web application.
+
+2. MVC is not specific to java technology it can be implemented to the various other technology.
+
+3. Basically design patterns are used to make the application component reusable , avoiding complexity and enhancing the performance for the application.
+
+There are three major components which are available they are
+
+1. Model 	: Model represents an object or Java POJO carrying data. It can also have logic to update controller if it's data changes
+
+2. Controller	: Controller acts on both model and view. It will work as a proxy between the model and the controller.
+
+		: It controls the data flow into the model object and updates the view whereever the data changes
+
+		: The various activities which a controller does they are
+
+		1. Security Checking		2.Logging		3.Transactions Implementation
+
+		: This component can be built using Servlet generally
+
+3.View		: This particular component basically used for the end user. This component interacts with the enduser.
+
+		: This components can be built using Html or JSP Page.
+
+
+Demo: Implementing MVC Implementation
+==========================================
+
+Step 1: Create a index.jsp
+
+index.jsp
+===========
+<%@ page language="java" contentType="text/html"%>
+<html>
+<body>
+
+<form action="LoginController" method="post">
+
+<table align="center" cellspacing="4">
+	<tr bgcolor="gray">
+		<td colspan="2"><h3 align="center">Sign Up Here</h3></td>
+	</tr>
+	<tr>
+	<td>User Name</td><td><input type="text" name="uname" required/></td>
+	</tr>
+	<tr>	
+	<td>Password</td><td><input type="password" name="passwd" required/></td>
+	</tr>
+	
+	<tr bgcolor="gray">
+	<td colspan="2">
+	<center>
+	<input type="submit" value="SUBMIT"/>&nbsp;&nbsp;<input type="reset" value="RESET"/>
+	</center>
+	</td>
+	</tr>
+
+</table>
+</form>
+
+</body>
+</html>
+
+Create a POJO class called Customer
+
+Customer.java
+=================
+package model;
+
+public class Customer 
+{
+	private String username;
+	private String password;
+	
+	public String getUsername() 
+	{
+		return username;
+	}
+	public void setUsername(String username) 
+	{
+		this.username = username;
+	}
+	public String getPassword() 
+	{
+		return password;
+	}
+	public void setPassword(String password) 
+	{
+		this.password = password;
+	}
+	
+	public boolean checkLogin() //business logic
+	{
+		if(username.equals("NIIT")&& password.equals("12345"))
+			return true;
+		else
+			return false;
+	}
+	
+	
+}
+
+Create a Controller called LoginController
+
+
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/LoginController")
+public class LoginController extends HttpServlet 
+{
+	private static final long serialVersionUID = 1L;
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
+		
+		String username=request.getParameter("uname");
+		String password=request.getParameter("passwd");
+		
+		model.Customer customer=new model.Customer();
+		customer.setUsername(username);
+		customer.setPassword(password);
+		
+		if(customer.checkLogin())
+		{
+			RequestDispatcher dispatch=request.getRequestDispatcher("Success.jsp");
+			dispatch.forward(request, response);
+		}
+		else
+		{
+			RequestDispatcher dispatch=request.getRequestDispatcher("Failure.jsp");
+			dispatch.forward(request, response);
+		}
+		
+	}
+
+}
+
+
+Create a View Page called Success.jsp
+
+<%@ page language="java" contentType="text/html"%>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+<h2 align="center">Successful Logged In</h2>
+
+</body>
+</html>
+
+Create a View Page called Failure.jsp
+
+<%@ page language="java" contentType="text/html"%>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+<h2 align="center">Login Name and Password Does not Match</h2>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

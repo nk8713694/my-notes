@@ -1,0 +1,321 @@
+Hibernate 
+=================
+- It is an ORM Framework. (ORM - Object Relational Mapping).
+
+- It is the framework which is going to map the Object oriented System entity to that of the database management system's table.
+
+- Hibernate is the upper layer of JDBC. Without jdbc hibernate can't exist.
+
+- It is a open source lightweight ORM tool.
+
+- Hibernate implements the specification of JPA(Java Persistence API).
+
+ORM Tool
+============
+- This tool simplifies the data creation, data manipulation(insert , update ,delete and retrieve).
+
+- It is a programming technique that maps the object to the data stored in the database.
+
+- Any ORM tool internally uses the JDBC API to interact with the database.
+
+Advantages of Hibernate Framework
+=================================
+1. Open Source and Light Weight  : Hibernate framework is open source under the GPL license and lightweight
+
+2. Fast Performance 		 : The performance of hibernate framework is fast because cache internally used in the hibernate framework.
+
+3. Database Independent Query	 : HQL (Hibernate Query Language) is an object oriented version query language of SQL. It generates automatically the 						 database related query depending on the underlying database. As a developer we need not to bother about the query of the 					specific database. So if in future if any changes in the database also will be then also still the same queries will be 					running.
+
+4.Automatic Table Creation	 : This gives the facility to create table automatically. We need not to create manually the table.
+
+5.Simplify the Complex Join	 : Fetching the data from multiple tables is easy in hibernate framework.
+
+Why ORM?
+================
+- When we are working with Object oriented system there may be a mismatch between the object oriented system and relational database model.
+
+- Some of the mismatch which we may found while we map between the object to the database table.
+
+1. Granularity 	: Sometimes we may have multiple classes for particular object model then the corresponding table.
+
+2. Inheritance 	: RDBMS do not define anything similar to inheritance. 
+
+3. Identity 	: RDBMS defines exactly on notion of sameness the primary key. However in object orientation both object identity(a==b) and also (a.equals(b)).
+
+4. Association	: Object oriented language represent association using object references whereas an RDBMS represents an association as a foreign key.
+
+5. Navigation	: The ways you access objects in java and in RDBMS are fundamentally different.
+
+- The solution for all of this is implemented using ORM (Object Relational Mapping).
+
+
+Hibernate Architecture
+===========================
+- Hibernate has a layer architecture which helps the user to operate without having to know the underlying API.
+
+- Hibernate as a part of Architecture we have six different components
+
+1. Configuration		2.SessionFactory			3.Session
+
+4. Criteria			5.Query					6.Transaction
+
+
+Demo : Write a Simple Application to Implementing Hibernate
+===============================================================
+Step 1: Create a simple application in Java.
+
+Step 2: Create a java class called Employee.java in entity package.
+package entity;
+
+public class Employee {
+	int employeeId;
+	String employeeName;
+	int salary;
+	String city;
+
+	public int getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(int employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public int getSalary() {
+		return salary;
+	}
+
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+}
+
+Step 3: Create a Configuration xml file called hibernate.cfg.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<hibernate-configuration>
+	<session-factory>
+		<property name="hbm2ddl.auto">update</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
+		<property name="hibernate.driver_class">org.h2.Driver</property>
+		<property name="hibernate.connection.url">jdbc:h2:tcp://localhost/~/S190420</property>
+		<property name="hibernate.connection.username">cdtje</property>
+		<property name="hibernate.connection.password">cdtje</property>
+		<mapping resource="Employee.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>
+
+Step 4: Create a Hibernate Mapping file called Employee.hbm.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<hibernate-mapping>
+	<class name="entity.Employee" table="Employee">
+		<id name="employeeId">
+			<generator class="assigned"></generator>
+		</id>
+		<property name="employeeName"></property>
+		<property name="salary"></property>
+		<property name="city"></property>
+	</class>
+</hibernate-mapping>
+
+Step 5: Create a HibernateUtil.java file
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class HibernateUtil 
+{
+	public static void main(String arg[])
+	{
+		Configuration config=new Configuration();
+		
+		config.configure("hibernate.cfg.xml");
+		
+		SessionFactory sessionFactory=config.buildSessionFactory();
+		
+		Session session=sessionFactory.openSession();
+		
+		entity.Employee employeeObj=new entity.Employee();
+		
+		employeeObj.setEmployeeId(1001);
+		employeeObj.setEmployeeName("Suresh");
+		employeeObj.setCity("NewDelhi");
+		employeeObj.setSalary(34000);
+		
+		Transaction transaction=session.beginTransaction();
+		session.save(employeeObj);
+		transaction.commit();
+		
+		session.close();
+		
+		System.out.println("Object is Saved");
+		
+	}
+}
+
+Deleting or Updating an Entity from a Database
+=======================================================
+- To delete or update an entity from the database table we need to get the object.
+
+- To get the particular object from the database table we need to use the get() or load() method.
+
+- These methods are the part of the Session interface itself.
+
+load() Method
+===============
+- This method retrieves a particular object from the persistent location i.e table.
+
+- If the object is not found in the database table then exception will be thrown by this method.
+
+Example
+========
+	Employee employeeObj=(Employee)session.load(Employee.class,employeeId_value);
+
+get() Method
+================
+- This method retrieves a particular object from the persistent location i.e table.
+
+- If the object is not found in the database table then null value will be returned by this method.
+
+Example
+========
+	Employee employeeObj=(Employee)session.get(Employee.class,employeeId_value);
+
+Demo : Write a code to delete Entities
+=======================================
+import java.util.Scanner;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+import entity.Employee;
+
+public class HibernateDelete 
+{
+	public static void main(String arg[])
+	{
+		Configuration config=new Configuration();
+		
+		config.configure("hibernate.cfg.xml");
+		
+		SessionFactory sessionFactory=config.buildSessionFactory();
+		
+		Session session=sessionFactory.openSession();
+	
+		Scanner scanner=new Scanner(System.in);	
+		
+		int employeeId;
+		
+		System.out.println("Enter the Employee ID to Delete");
+		
+		employeeId=scanner.nextInt();
+		
+		Employee employeeObj=(Employee)session.get(Employee.class,employeeId);
+		
+		Transaction transaction=session.beginTransaction();
+		
+		session.delete(employeeObj);
+		
+		transaction.commit();
+		
+		session.close();
+		
+		System.out.println("Employee Deleted");
+		
+	}
+	
+}
+
+Demo : Updating the Employee Object
+==================================================
+import java.util.Scanner;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+import entity.Employee;
+
+public class HibernateUpdate 
+{
+	public static void main(String arg[])
+	{
+		Configuration config=new Configuration();
+		
+		config.configure("hibernate.cfg.xml");
+		
+		SessionFactory sessionFactory=config.buildSessionFactory();
+		
+		Session session=sessionFactory.openSession();
+	
+		Scanner scanner=new Scanner(System.in);	
+		
+		int employeeId;
+		
+		System.out.println("Enter the Employee ID to Update");
+		
+		employeeId=scanner.nextInt();
+		
+		Employee employeeObj=(Employee)session.get(Employee.class,employeeId);
+		
+		System.out.println("Enter the New Salary:");
+		employeeObj.setSalary(scanner.nextInt());
+		
+		System.out.println("Enter the New City");
+		employeeObj.setCity(scanner.next());
+		
+		Transaction transaction=session.beginTransaction();
+		
+		session.update(employeeObj);
+		
+		transaction.commit();
+		
+		session.close();
+		
+		System.out.println("Employee Updated");
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

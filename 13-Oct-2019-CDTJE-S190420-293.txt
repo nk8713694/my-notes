@@ -1,0 +1,396 @@
+Multipart Implementation | File Uploading | Image Uploading
+========================================================
+Backend
+==========
+Step 1: Create a simple field called pimage of type MultipartFile.
+
+- This particular class type will be available in webmvc dependency. We need to define this with @Transient modifier as it is not going to be saved in the database. It will saved in the File System.
+
+@Transient
+MultipartFile pimage;
+
+- Now the Product class will something look like this.
+
+Product.java
+===================
+package com.ecomm.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.web.multipart.MultipartFile;
+
+@Entity
+@Table
+public class Product {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	int productId;
+	int stock;
+	int price;
+
+	String productName;
+	String productDesc;
+
+	int categoryId;
+	int supplierId;
+	
+	@Transient
+	MultipartFile pimage;
+
+	public MultipartFile getPimage() {
+		return pimage;
+	}
+
+	public void setPimage(MultipartFile pimage) {
+		this.pimage = pimage;
+	}
+
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getProductDesc() {
+		return productDesc;
+	}
+
+	public void setProductDesc(String productDesc) {
+		this.productDesc = productDesc;
+	}
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public int getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
+	}
+}
+
+Step 2: Add the following dependencies in the Frontend pom.xml for implementing fileuploading and Stream management.
+
+<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+- The above two dependencies will be added to the pom.xml file of frontend and basically this will used for the fileupload and stream managing.
+
+Step 3: Add the bean of CommonsMultipartResolver in DispatcherServlet.xml file.
+
+- The below is the bean created for implementing fileupload.
+<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="100000"/>
+</bean>	
+
+- We also need to implement resources mapping.	
+	<mvc:resources mapping="/resources/**" location="/resources/"/>
+
+Step 4: Create a Folder called resources and with in that images folder in web folder.
+
+Step 5: Change the form description in product.jsp page and also we need to add the new component.
+
+Product.jsp
+=================
+<form:form action="insertProduct" modelAttribute="product" method="post" enctype="multipart/form-data">
+	<table class="table table-bordered">
+		<tr>
+			<td colspan="2">
+				<center>
+					Product Information
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>Product Name</td>
+			<td> <form:input path="productName"/></td>
+		</tr>
+		<tr>
+			<td>Product Desc</td>
+			<td> <form:textarea path="productDesc"/></td>
+		</tr>
+		<tr>
+			<td>Category</td>
+			<td> 
+				<form:select path="categoryId">
+					<form:option value="0" label="--Select List--"/>
+					<form:options items="${categoryList}"/>
+				</form:select>
+			</td>
+		</tr>
+		<tr>
+			<td>Supplier</td>
+			<td> <form:input path="supplierId"/></td>
+		</tr>
+		<tr>
+			<td>Price</td>
+			<td> <form:input path="price"/></td>
+		</tr>
+		<tr>
+			<td>Stock</td>
+			<td> <form:input path="stock"/></td>
+		</tr>
+		<tr>
+			<td>Product Image</td>
+			<td> <form:input type="file" path="pimage"/></td>
+		</tr>
+		<tr>
+			<td colspan="2"> 
+				<center>
+				<input type="submit" value="Insert Product" class="btn btn-success"/>
+				</center>
+			</td>
+		</tr>
+	
+	</table>
+</form:form>
+
+Step 6 : Write the code in Product Controller.
+
+@RequestMapping(value="/insertProduct",method=RequestMethod.POST)
+	public String insertProduct(@ModelAttribute("product")Product product,Model m,@RequestParam("pimage")MultipartFile pimage)
+	{
+		
+		productDAO.addProduct(product);
+		
+		
+		String path="C:\\CDTJE-420-293-P1\\MobileManiaFrontend\\src\\main\\webapp\\resources\\images\\";
+		path=path+product.getProductId()+".jpg";
+		
+		File productImage=new File(path);
+		
+		if(!pimage.isEmpty())
+		{
+			try
+			{
+				byte[] buffer=pimage.getBytes();
+				FileOutputStream fos=new FileOutputStream(productImage);
+				BufferedOutputStream bs=new BufferedOutputStream(fos);
+				bs.write(buffer);
+				bs.close();
+
+			}
+			catch(Exception e)
+			{
+				System.out.println("Exception Arised:"+e);
+			}
+		}
+		else
+		{
+			System.out.println("Error Occured:");
+		}
+		
+		List<Product> productList=productDAO.productList();
+		m.addAttribute("productList", productList);
+		
+		Product product1=new Product();
+		m.addAttribute("product", product1);
+		
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", this.getCategoryList(categoryList));
+		
+		return "Product";
+	}
+
+Step 7 : Create a ProductHome.jsp page which will contain all the Product to be displayed.
+
+ProductHome.jsp
+===================
+<%@ page language="java" contentType="text/html"%>
+<%@ include file="CommonHeader.jsp"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+
+<div class="container">
+
+	<br /> <br />
+
+	<div class="row text-center text-lg-left">
+		<c:forEach items="${productList}" var="product">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+				<c:if test="${product.stock > 0}">
+					<a href="<c:url value="/totalProductDisplay/${product.productId}"/>" class="d-block mb-4 h-100">
+				</c:if>
+				<img class="img-fluid img-thumbnail"
+					src="<c:url value="/resources/images/${product.productId}.jpg"/>"
+					width="100px" height="100px" /> 
+					</a>
+				<p>Price : ${product.price}/-</p>
+		
+				<p>Stock : <c:if test="${product.stock > 0}">${product.stock} </c:if>
+					<c:if test="${product.stock <= 0}">
+					<font color="red">out of stock</font> 
+					</c:if>
+				</p>
+		
+				<p><h4>${product.productName}</h4></p> 
+			</div>
+		</c:forEach>
+	</div>
+
+
+</div>
+
+</body>
+</html>
+
+Step 8 : To display the ProductHome to we need to write the Mapping Code.
+
+@RequestMapping(value="/productHome")
+	public String showProductHome(Model m)
+	{
+		List<Product> productList=productDAO.productList();
+		m.addAttribute("productList", productList);
+				
+		List<Category> categoryList=categoryDAO.listCategories();
+		m.addAttribute("categoryList", this.getCategoryList(categoryList));
+		
+		return "ProductHome";
+	}
+
+
+Step 9 : Write the JSP code called TotalProductDisplay.jsp
+
+TotalProductDisplay.jsp
+=========================
+<%@ page language="java" contentType="text/html"%>
+<%@ include file="CommonHeader.jsp"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<link rel="stylesheet" href="<c:url value="/resources/css/MyCSS.css"/>"/>
+
+<div class="container">
+
+	<br /> <br />
+	
+			<div class="card">
+			<div class="container-fliud">
+				<div class="wrapper row">
+					<div class="preview col-md-6">
+						
+						<div class="preview-pic tab-content">
+						  <div class="tab-pane active" id="pic-1"><img src="<c:url value="/resources/images/${product.productId}.jpg"/>"/></div>
+						</div>
+						<ul class="preview-thumbnail nav nav-tabs">
+						
+						</ul>
+						
+					</div>
+					<div class="details col-md-6">
+						<h3 class="product-title">${product.productName}</h3>
+						<div class="rating">
+							<div class="stars">
+								<span class="fa fa-star checked"></span>
+								<span class="fa fa-star checked"></span>
+								<span class="fa fa-star checked"></span>
+								<span class="fa fa-star"></span>
+								<span class="fa fa-star"></span>
+							</div>
+							<span class="review-no">41 reviews</span>
+						</div>
+						<form action="<c:url value="/addToCart/${product.productId}"/>" method="post">
+						<p class="product-description">${product.productDesc}</p>
+						<h4 class="price">current price: <span>Rs.${product.price}/-</span></h4>
+						<p class="vote"><strong>91%</strong> of buyers enjoyed this product! <strong>(87 votes)</strong></p>
+						<h5 class="sizes">Quantity
+							<select name="quantity">
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+							</select>
+						</h5>
+						<h5 class="colors">Stock :${product.stock}</h5>
+						<div class="action">
+							<button class="add-to-cart btn btn-default" type="submit">add to cart</button>
+						</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+</body>
+</html>
+
+Step 10 : ProductController.java
+===============================
+@RequestMapping(value="/totalProductDisplay/{productId}")
+	public String totalProductDisplay(@PathVariable("productId")int productId,Model m)
+	{
+		Product product=productDAO.getProduct(productId);
+		m.addAttribute("product", product);
+		return "TotalProductDisplay";
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

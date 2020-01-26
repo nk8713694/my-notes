@@ -1,0 +1,363 @@
+Maven 
+=============
+- Maven is a software project management and comprehension tool from Apache.
+
+- This is based totally on Project Object Model (Pom).
+
+- Maven can manage building the Project , Reporting and documentation.
+
+- It simplifies the build Process of Ant. It is much more advanced than ANT.
+
+- Ant is the traditional tool for automating the build process for a particular project in java.
+
+- The current version of Maven is 3.
+
+Problem without Maven
+===========================
+- While we are creating a project there are lot of issues which we face in general for developing Spring,Hibernate based application.
+
+1. Adding the Dependencies (Jar) to the Project :
+	- In case of struts , spring, hibernate framework we need to add set of jar files in each project. Here when there  is a change in the version of these frameworks and if we wish to change with the current version then it is cumbersome as we need to remove the existing jar file and add the newly version jar file.
+
+2. Creating the right Project Structure :
+	- We must create the right project structure for different application (Like StandAlone , Web Project  etc). For each and every project type we need to keep properly the folders and other files in a proper order if we are not using the IDE. 
+
+3. Building and Deploying the Project : 
+	- Once the Coding of the Project is completed then we have to build and deploy it somewhere else. This process is again a complete steps which need to followed with remembering various command for that.
+
+What Maven Does?
+=====================
+- Maven simplifies the process of above mentioned problems. Some of the things which can be done by Maven they are
+
+1. It makes the Project easy to build.
+
+2. It provides the uniform build process
+
+3. It provides the Project Information.
+
+4. It is easy to migrate for new features of Maven
+
+What as a Build Tool?
+====================
+- A build tool will takes care about the building process of hte application which includes 
+
+1. Generating the Source Code.
+
+2. Compiles the Source Code
+
+3. Packages the Compiled Code into the Jar or Zip File.
+
+4. Install the packaged code in local repository or server repository.
+
+Maven Evolution
+====================
+- Maven was originally designed to simplify the building process in Jarkarta Turbine Project.
+
+Convention Over Configuration
+===========================
+- Maven uses the convention over the configuration which means the developer are not required to create the build process themselves.
+
+- Developer do not have to mention the project structure and other configuration detail. Maven will provide the default behaviour for project and the Project structure.
+
+- In Maven developer has to just configure in pom.xml whichever the thing need to be mentioned.
+
+Envirnoment Setup
+=========================
+- Maven is a java based tool . So for this implementation we need to install jdk first.
+
+- Maven support jdk1.7 or above.
+
+- We need to create JAVA_HOME envirnoment variable in the operating system.
+
+- In windows we need to set the path as C:\Program Files\Java\jdk1.8.0_221  
+
+- Download maven from https://www.maven.apache.org/download. Extract the zip file and store it into the base directly or it can be anywhere.
+
+- Create a Maven envirnoment variables called MAVEN_HOME and give the path as C:\apache-maven-3.6.2 . This path as I have stored in the C:\
+
+- Add the MAVEN_HOME path to the main path using %MAVEN_HOME%
+
+Pom.xml
+================
+- pom stands for project object model.
+
+- This is the fundamental unit of work in the maven.
+
+- It is a simple xml file which will reside in the base directory of the  project.
+
+- The POM.xml file will contain various information about the project and also contains the configurational details of the project.
+
+- Some of the configuration which are been done in pom.xml file they are
+
+1. Project Dependencies : These are basically jar files which we are adding to the Project. These dependencies we can write using the simple xml.
+
+<dependency>
+	<groupId>com.springframework</groupId>
+	<artifactId>spring-core</artifactId>
+	<version>5.0.8.RELEASE</version>
+</dependency>
+
+2.Plugins : There are lot of plug ins which we can add using the pom.xml file also.
+
+3. Project Versions: We can add our project versions
+
+- Before we create the Maven project we need to decide project's groupId and name (artifactId) and its version.
+
+Demo : Pom.xml File 
+==========================
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>com.ecomm</groupId>
+	<artifactId>GadgetFrontend</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<name>GadgetFrontend Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+
+	</dependencies>
+</project>
+
+Nodes and Description
+=====================
+1. Project  : This is the root tag of the pom.xml file. Here we need to specify the schema setting such as apache schema and w3.org specifications.
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+- Here xsd means Xml schema Definition are the rules which are imposed for the xml file.
+
+2. Model Version : This should be 4.0.0.
+
+3. groupId  : It is an Id of the Project's group . Basically this group Id will also be the package structure.  This is unique among the organization or project. An example of the group Id can com.company.bank has all bank related projects.
+
+4. artifactId : This is an Id of the Project. This is generally the project name. May be the RonaldBank can be the artifactId for the com.company.bank groupId.
+
+5. Version : This is the version of the Project. 
+
+Creating a Maven Project using Command Line
+==========================================
+- To create a maven project using the command line interface we need to use the following syntax
+
+Syntax
+===========
+c:\> mvn archetype:generate -DgroupId={project-package} -DartifactId={project-name} -DarchetypeArtifactId ={maven-template} -DinteractiveMode=false
+
+Example
+==========
+c:\>mvn archetype:generate -DgroupId=com.ecomm -DartifactId=GadgetGuru -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false 
+
+- To run the maven project in eclipse then the following command we need to run.
+
+c:\directory_mvn_project>mvn eclipse:eclipse
+
+Creating the Backend Project
+======================================
+- We need to create maven quickstart type of project for backend implementation.
+
+- To create a maven project we need to be there in java ee perspective.
+
+- In the maven project we need to configure the jre to jdk in java build path.
+
+Step 1: Create a DBConfig.java file in config package.
+
+DBConfig.java
+===============
+package com.ecomm.config;
+
+import java.util.Properties;
+import javax.sql.DataSource;
+
+import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@Configuration
+@EnableTransactionManagement
+@ComponentScan("com.ecomm")
+public class DBConfig 
+{
+	//1. Create a Bean of DataSource 
+	
+	@Bean(name="dataSource")
+	public DataSource getH2DataSource()
+	{
+		DriverManagerDataSource dataSource=new DriverManagerDataSource();
+		dataSource.setUrl("");
+		dataSource.setDriverClassName("org.h2.Driver");
+		dataSource.setUsername("cdtje");
+		dataSource.setPassword("cdtje");
+		return dataSource;
+	}
+	
+	//2. Create a Bean for SessionFactory
+	
+	@Bean(name="sessionFactory")
+	public SessionFactory getSessionFactory()
+	{
+		Properties hibernateProp=new Properties();
+		hibernateProp.put("hibernate.hbm2ddl.auto", "update");
+		hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+		
+		LocalSessionFactoryBuilder factory=new LocalSessionFactoryBuilder(this.getH2DataSource());
+		factory.addProperties(hibernateProp);
+		
+		SessionFactory sessionFactory = factory.buildSessionFactory();
+		return sessionFactory;
+	}
+	
+	//3. Create a Bean for HibernateTransactionManagement
+	
+	@Bean(name="txManager")
+	public HibernateTransactionManager getHibernateTransactionManager(SessionFactory sessionFactory)
+	{
+		return new HibernateTransactionManager(sessionFactory);
+	}
+}
+
+
+Step 2: Add the following dependencies required for our application 
+
+Spring 		: 	1. spring-core	2.spring-context	3.spring-orm	4.spring-jdbc	5.spring-tx	
+
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>5.0.8.RELEASE</version>
+		</dependency>
+- While we are adding the spring-orm dependency then automatically the other dependencies will be gets added
+
+1. spring-orm 	2.spring-beans	3.spring-core	4.spring-jcl	5.spring-jdbc	6.spring-tx
+
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+    			<groupId>org.springframework</groupId>
+    			<artifactId>spring-context</artifactId>
+    			<version>5.0.8.RELEASE</version>
+		</dependency>
+
+- While we are adding the spring-context dependency then automatically the other dependencies will be gets added.
+
+1.spring-context	2.spring-aop	3.spring-expression
+
+Hibernate		:	1. hibernate-core
+
+<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>5.3.7.Final</version>
+</dependency>
+
+-While we are adding the hibernate-core dependency then automatically the following dependencies will be gets added.
+
+1. hibernate-core-5.3.7.Final.jar	2.jboss-loggin-3.3.2.Final.jar	3.javax.persistence-api.jar
+
+4.hibernate-commons-annotations-5.0.4.Final.jar
+
+h2		: 	1.H2- 4.1.197
+
+<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <version>1.4.197</version>
+    <scope>test</scope>
+</dependency>
+
+
+junit		: 	1.junit.4.12
+
+<!-- https://mvnrepository.com/artifact/junit/junit -->
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+    <scope>test</scope>
+</dependency>
+
+Step 3: Creating a Model class
+
+package com.ecomm.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table
+public class Category 
+{
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	int categoryId;
+
+	String categoryName;
+	String categoryDesc;
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public String getCategoryDesc() {
+		return categoryDesc;
+	}
+
+	public void setCategoryDesc(String categoryDesc) {
+		this.categoryDesc = categoryDesc;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

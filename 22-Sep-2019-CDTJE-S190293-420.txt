@@ -1,0 +1,577 @@
+Demo :Implementing DBConfig File and Test it
+===============================================
+
+DBConfig.java
+===============
+package com.ecomm.config;
+
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.ecomm.model.Category;
+
+@Configuration
+@EnableTransactionManagement
+@ComponentScan("com.ecomm")
+public class DBConfig 
+{
+	//1. Create a Bean of DataSource 
+	
+	@Bean(name="dataSource")
+	public DataSource getH2DataSource()
+	{
+		DriverManagerDataSource dataSource=new DriverManagerDataSource();
+		dataSource.setUrl("jdbc:h2:tcp://localhost/~/S190420_293");
+		dataSource.setDriverClassName("org.h2.Driver");
+		dataSource.setUsername("cdtje");
+		dataSource.setPassword("cdtje");
+		
+		System.out.println("======== dataSource Bean Created===========");
+		
+		return dataSource;
+	}
+	
+	//2. Create a Bean for SessionFactory
+	
+	@Bean(name="sessionFactory")
+	public SessionFactory getSessionFactory()
+	{
+		Properties hibernateProp=new Properties();
+		hibernateProp.put("hibernate.hbm2ddl.auto", "update");
+		hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+		
+		LocalSessionFactoryBuilder factory=new LocalSessionFactoryBuilder(this.getH2DataSource());
+		factory.addProperties(hibernateProp);
+		
+		factory.addAnnotatedClass(Category.class);
+		
+		SessionFactory sessionFactory = factory.buildSessionFactory();
+		System.out.println("======== SessionFactory Bean Created===========");
+		return sessionFactory;
+	}
+	
+	//3. Create a Bean for HibernateTransactionManagement
+	
+	@Bean(name="txManager")
+	public HibernateTransactionManager getHibernateTransactionManager(SessionFactory sessionFactory)
+	{
+		System.out.println("======== Hibernate Transaction  Bean Created===========");
+		return new HibernateTransactionManager(sessionFactory);
+	}
+}
+
+DBConfigTest.java
+==================
+package com.ecomm.test;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class DBConfigTest 
+{
+	public static void main(String arg[])
+	{
+		AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext();
+		context.scan("com.ecomm");
+		context.refresh();
+	}
+}
+
+- The above one we have implemented the test with a simple manual test. Here we just confirmed that the three beans will be created after the DBConfig class created.
+
+Junit Level Testing
+====================
+- Testing is the process of checking the functionality of an application to ensure it runs as per the requirement.
+
+- Unit testing is nothing but testing a single entity at a given point of time the entity can be class or a method.
+
+- Unit testing plays a critical role in helping the software company to deliver a quality product.
+
+- Unit testing can be done in two different ways they are
+
+1. Manual Testing 				2.Automated Testing
+
+Manual Vs Automated Testing
+===========================
+Manual Testing
+	: The test case done manually without any tool or any framework.
+
+	: Time consuming and tedius process
+
+	: Huge investment of human resources.
+
+	: Less reliable , No customization of testing process.
+
+Automated Testing
+	: It will use the tool support and executing the test cases
+
+	: It will be fast compare to the manual testing
+
+	: Less human resources are used.
+
+	: More reliable test can be customizable using the program
+
+Junit Testing
+================
+- Junit is a testing framework for java programming language.
+
+- Junit promotes the idea of first testing then coding.
+
+- Junit approaches for incremental coding that is we write little code then test it and we increment the code.
+
+- Junit Process will reduce the debugging of huge code as we already know by which code the error comes.
+
+Features of Junit
+================
+- It is an open source framework which is used for writing and running tests.
+
+- It provides the variety of annotations to identify the test methods.
+
+- It provides the test runners for running the tests.
+
+Unit Test Case
+=================
+- Unit Test case is the part of the code which ensure that another part of the code works as expected.
+
+- Any unit test case is characterized by a known input and expected result.
+
+- Junit testing framework can easily be integrated with different IDE they are 1.Eclipse 	2.NetBeans
+
+-It ca be integrated with the built in tool like Maven and Ant.
+
+Implementing the Test Case
+=========================
+- To implement the test case we need to add a Junit test case class.
+
+- There are various annotations which we are going to implement they are
+
+1. @BeforeClass	: This annotation we implement to the method which should be executed before any other unit test cases will run and before the class.
+
+2. @Test		: Here this annotations which is used for specify each tests . So here we will be creating the number of test methods depending on  the number of DAO 		methods.
+
+Demo : Implementing Junit Test for DAO
+=====================================
+package com.ecomm.dao;
+
+import java.util.List;
+
+import com.ecomm.model.Category;
+
+public interface CategoryDAO 
+{
+	public boolean addCategory(Category category);
+	public boolean deleteCategory(Category category);
+	public boolean updateCategory(Category category);
+	public Category getCategory(int categoryId);
+	public List<Category> listCategories();
+}
+
+package com.ecomm.dao;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ecomm.model.Category;
+
+@Repository("categoryDAO")
+@Transactional
+public class CategoryDAOImpl implements CategoryDAO
+{
+	@Autowired
+	SessionFactory sessionFactory;
+
+	@Override
+	public boolean addCategory(Category category) 
+	{
+		try
+		{
+			sessionFactory.getCurrentSession().save(category);
+			return true;
+		}
+		catch(Exception e)
+		{
+		return false;
+		}
+	}
+
+	@Override
+	public boolean deleteCategory(Category category) 
+	{
+		try
+		{
+			sessionFactory.getCurrentSession().delete(category);
+			return true;
+		}
+		catch(Exception e)
+		{
+		return false;
+		}
+	}
+
+	@Override
+	public boolean updateCategory(Category category) 
+	{
+		try
+		{
+			sessionFactory.getCurrentSession().update(category);
+			return true;
+		}
+		catch(Exception e)
+		{
+		return false;
+		}
+	}
+
+	@Override
+	public Category getCategory(int categoryId) 
+	{
+		Session session=sessionFactory.openSession();
+		Category category=(Category)session.get(Category.class, categoryId);
+		session.close();
+		return category;
+	}
+
+	@Override
+	public List<Category> listCategories() 
+	{
+		Session session=sessionFactory.openSession();
+		Query query=session.createQuery("from Category");
+		List<Category> categoryList=query.list();
+		session.close();
+		return categoryList;
+	}
+
+}
+
+package com.ecomm.test;
+
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.ecomm.dao.CategoryDAO;
+import com.ecomm.model.Category;
+
+public class CategoryDAOTest 
+{
+	static CategoryDAO categoryDAO;
+	
+	@BeforeClass
+	public static void executeFirst()
+	{
+		AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext();
+		context.scan("com.ecomm");
+		context.refresh();
+		
+		categoryDAO=(CategoryDAO)context.getBean("categoryDAO");
+	}
+	
+	@Ignore
+	@Test
+	public void addCategoryTest()
+	{
+		Category category=new Category();
+		
+		category.setCategoryName("Apple");
+		category.setCategoryDesc("All Mobiles of Apple Brand");
+		
+		assertTrue("Problem in Adding Category:",categoryDAO.addCategory(category));
+	}
+	@Ignore
+	@Test
+	public void deleteCategoryTest()
+	{
+		Category category = categoryDAO.getCategory(2);
+		assertTrue("Problem in Deleting the Category",categoryDAO.deleteCategory(category));
+	}
+	@Ignore
+	@Test
+	public void updateCategoryTest()
+	{
+		Category category=categoryDAO.getCategory(3);
+		category.setCategoryDesc("All the Basic and Advanced Model of Xiomi");
+		
+		assertTrue("Problem in Updating the Category",categoryDAO.updateCategory(category));	
+	}
+	
+	@Test
+	public void listCategoriesTest()
+	{
+		List<Category> categoryList=categoryDAO.listCategories();
+		
+		assertTrue("Problem in Listing the Categories",categoryList.size()>0);
+		
+		for(Category category:categoryList)
+		{
+			System.out.print(category.getCategoryId()+":::");
+			System.out.print(category.getCategoryName()+":::");
+			System.out.println(category.getCategoryDesc());
+		}
+	}
+}
+
+Product.java
+=================
+package com.ecomm.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table
+public class Product {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	int productId;
+	int stock;
+	int price;
+
+	String productName;
+	String productDesc;
+
+	int categoryId;
+	int supplierId;
+
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getProductDesc() {
+		return productDesc;
+	}
+
+	public void setProductDesc(String productDesc) {
+		this.productDesc = productDesc;
+	}
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public int getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
+	}
+
+}
+
+UserDetail.java
+===============
+package com.ecomm.model;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table
+public class UserDetail 
+{
+	@Id
+	String username;
+	
+	String password;
+	String name;
+	boolean enabled;
+	String address;
+	String role;
+	String mobile;
+	String emailId;
+	
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public boolean isEnabled() {
+		return enabled;
+	}
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+	
+	
+}
+
+UserDAOImpl.java
+===================
+package com.ecomm.dao;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ecomm.model.UserDetail;
+
+@Repository("userDAO")
+@Transactional
+public class UserDAOImpl implements UserDAO
+{
+	@Autowired
+	SessionFactory sessionFactory;
+
+	@Override
+	public boolean registerUser(UserDetail user) 
+	{
+		try
+		{
+			sessionFactory.getCurrentSession().save(user);
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+	}
+
+	@Override
+	public boolean updateUserDetail(UserDetail user) 
+	{
+		try
+		{
+			sessionFactory.getCurrentSession().update(user);
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+	}
+
+	@Override
+	public UserDetail getUser(String username) 
+	{
+		Session session=sessionFactory.openSession();
+		UserDetail user=session.get(UserDetail.class, username);
+		session.close();
+		return user;
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
