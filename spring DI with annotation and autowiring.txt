@@ -1,0 +1,63 @@
+Demo Example:
+Our Coach already provides dail workouts:
+now will also provide daily fortunes:
+
+new helper: FortuneService
+this is a dependency
+
+what is Spring auto-wiring?
+for dependency injection ,Spring can use auto wiring
+
+Spring will look for a class that matches the property 
+matches by type:class or interface:
+
+Spring will inject it automatically .... hence it is auto-wired
+
+Auto-wiring example:
+injecting FortuneService into Coach implementation
+spring will scan @Components
+Any one implements FortuneService interface??
+if so let's inject them.for example :HappyFortuneService
+
+autowiring injection types:
+Constructor injection:
+Setter injection:
+Field injections:
+
+
+development process for constructor injection:
+1.define the dependency intreface and class:
+2.create a constructor in your class for injections;
+3.configure the dependency injection with @Autowired annotation
+
+setter injection
+easy:
+
+which injection should we use:
+choose a style(injection) and be consistent in that project
+
+Autowiring :
+injecting FortuneService into a Coach implementation
+spring will scan @Components
+Anyone implements the FortuneService interface??
+if yes the inject them ..... oops whcih one?
+ex: happfortune or sadfortune or databasefortuneservice
+ u will get an complitaion error
+injecting autowired dependencies failed nouniquebeandefination
+
+Injection types:
+Can apply @Qualifier annotation to:
+constructor ,setter and field injection
+@Qualifier("happyFortuneService")
+
+
+
+
+
+
+
+
+
+
+
+

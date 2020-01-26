@@ -1,0 +1,16 @@
+bean scopes:
+scope refers to the life cycle of a bean
+.how long the bean live.
+how many instances are created:
+how is the bean shared:
+@scope("singleton")
+@scope("prototype")
+
+development process:
+define your method for init and destroy
+Add annotations :@PostConstruct and @PreDestroy
+
+@PostConstruct
+code will execute after constructor nad after injection of dependencies
+@PreDestroy
+code will execute before bean is destroyed

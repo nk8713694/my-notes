@@ -1,0 +1,74 @@
+the need for validations:
+check the user input form the user:
+required fields:
+valid number sin range:
+custom business rule:
+vlalid format(postal code)
+
+Java bean validation api:
+java has a standard bean validation API
+defininga meat mode and API for entity validation
+spsring validation 
+spring version 4 and higher suppprts bean validation API
+prefered method for validation when building the spring apps:
+simply add validation jars to our project
+annotation validdation @NotNull 
+@Min
+@Max
+@Size
+@Pattern 
+@Future/@Past
+others:........
+
+our road map:
+1.set up deveelopment envirmonment:
+reuired field
+validate number  range: min /max
+validate using reular expresision(reqexp)
+custom validation
+
+Java's Standard Bean Validation API
+Java standard bean validation api(JSR-303/309)
+Only a specifiaction vendor independent ... portable
+but still we need an implementation
+
+The Hibernate team comes to rescue:
+Hibernate started a ORM   project:
+but in recent years,they have expandeed into others areas;
+they have fully complaint JSR(303/309) impelmentation
+Not tied to ORM sor database work.....seperate project
+
+
+development process:
+download the validation jar files from hibernate website:
+add jar file to the project
+
+
+whitspace :
+
+our previos example has aproblem with a white space:
+last name field with all whitespace passed yikes:
+should have failed:
+
+@InitBinder
+@InitBinder annotation will work as a prepocessor
+it will pre-process each web request to oufr controller:
+method annotated with @InitBinder is executed
+
+wew will us eto trim left and right whitespace
+if string has only whitepsace then trim to null:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

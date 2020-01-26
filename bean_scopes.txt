@@ -1,0 +1,53 @@
+bean scopes:
+scopes will refer to the life cycle of bean:
+how long does the bean live?
+how many instances will be created;
+how is the bean shared?
+
+default scope of bean is singleton:
+
+what is singleton ?
+sprig container creates only one intsance of the bean ,by default:
+
+it is cached in memory:
+all requests for the bean:
+will return a SHARED reference to the Same bean:
+
+Different scopes:
+1.singleton: create a single instance of the bea,.defaulr scope
+2: prototype: create a new bean instance for  each container request:
+3.request: scopes to ans http web request.only used for web apps:
+4:session: scope to an http web session. only used for web apps:
+5.global-session:scoped to a gloabl http web sessin.only used for web apps:
+
+
+bean life cycle:
+container started:
+bean instantiated:
+dependencies injected:
+internal spring processing:
+ur custom init method(bean is readay for use )
+ur custom destro method:
+
+
+Bean life cycle methods / Hooks:
+u can add custom code during bean initialisation:
+calling custom business logic methods:
+setting up handles to resouces(db,sockets,file etc)
+
+u can add custom code during bean destruction:
+calling custom business logic methods:
+setting up handles to resouces(db,sockets,file etc)
+
+
+
+
+
+
+
+
+
+
+
+
+

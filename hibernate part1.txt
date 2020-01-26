@@ -1,0 +1,55 @@
+hibernate:
+a framework to save/persist java objects into database:
+benifits of hibernate:
+hibenrate handles all low level SQL:
+minimises the amount of JDBC code u have to develop
+hibernate provides the objecet relational mapping(orm)
+
+create a java object:
+Student theStudent  = new Student("john","doe","jon@gamil.com");
+
+// save it to the database:
+int theId=(Integer)session.save(theStudent);
+
+//retrive the data from the database using the primary key
+Student myStudent =session.get(Student.class,theId);
+
+Query for java objects:
+Query query=session.createQuery("fom Student");//hibernate query language
+List<Student> students=query.list();// get all list of objects
+
+hibrenate and jdbc//// understanding
+how does hibernate related to jdbc
+hibernate uses jdbc for all database connections:
+
+
+deal with microsoft :
+
+hibernate dev porcess:
+
+java annotations :
+ 1. map the class to database table:
+ 2: map fields to database columns:
+
+
+the two key players:
+SessionFactory :
+reads the hibernate config file:
+create session objects:
+heavy weight object:
+only create once in your app:
+
+Session:
+wraps the JDBC connection
+main objects used to save / retrive objects:
+short lived objects:
+retrived from SessionFactory
+
+
+
+
+
+
+
+
+

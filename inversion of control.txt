@@ -1,0 +1,40 @@
+IOC:the approach of outsouricng the construction and managenet  od obbjects.
+
+primary function of spring container:
+create and amaanage objects:(inversion of control)
+
+inject object dependencies(dependency of injection):
+
+configuring spring container:
+xml configuration file:(legacy)
+java annotation:
+java source code:
+
+spring development process:
+1.configuring ur spring beans:
+2.create a sprig container:
+3.retrive beans from spring container:
+
+spring container is generally known as ApplicationContext:
+specialized implemenatation:
+ClassPathXmlApplicationContext
+AnnotationConfigApplicationContext
+GenericWebApplicationContext
+others..............
+
+create a Spring Container:
+ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("applicationContext.xml");
+Coach the Coach=context.getBean("myCoach",Coach.class);
+//here Coach.class is the interface
+
+
+
+
+
+
+
+
+
+
+
+ 

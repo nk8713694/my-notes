@@ -1,0 +1,38 @@
+what are java annotations:
+special labels/markers added to java classes:
+provide meta data about the class:
+processed at compile time or run-time for special processing.
+
+Why spring configuration with annotation:
+xml onfiguration can be  verbose:
+configuere ur spring bean with annotation:
+annotations minimise the XML configuration:
+
+Scanning for component classs:
+spring will scan ur java classes for special annotation:
+automatically register the beans in the spring container:
+
+development process:
+enable component scanning from spring config file:
+add the @Component Annotation to ur java class:
+retrive the bean from spring container
+
+
+Spring also supports Default Bean IDs
+Default bean id:the class name, make first letter lower case:
+Class name :TennisCoach
+default bean id: tennisCoach
+
+
+
+
+
+
+
+
+
+
+
+
+
+

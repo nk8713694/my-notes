@@ -1,0 +1,66 @@
+Reading html from data with @RequestParam Annnotation
+
+
+Development process:
+code example:
+we want ot create a new method to process form data
+read the form data : student name:
+convert the name to uppercase:
+addd the uppercase version to the model
+
+Adding RequestMappings to the controller:
+
+serves as parent mapping controller:
+all request mapping on methods in the controller are relative:
+similar to folder directory structures:
+
+controller request mapping
+
+@RequestMapping("/funny")
+public class FunnyController()
+{
+@RequestMapping("showform")------------ here we have /funny/showform
+public void show()
+{
+sop("hello");
+}
+}
+
+
+-----------------------------------------------------
+Spring mvc form tags:
+. spring mvc form tags are the buildinggblock for a web page:
+form tags are congigurable and reusable for a web page
+
+Data Binding:
+spring mvc form tags can make use of data binding
+automatically  setting/retrieving the data from a java bean /object
+
+Showing form:
+in your spring controler:
+before u show the form u must add the model attribute:
+ this is a bean that will hold the form data for the data binding
+
+
+Hibernate query language:
+ query language is for retrieving the objects:
+similar to sql in nature:
+where,like,order by ,join, in , etc
+
+Retrieve all students:
+List <Student> theStudents = session.createQuery("from Student").getResultList();
+
+theStudents=session.createQuery("from Student s where s.lastName='doe'  " + " OR  s.firstName='dave' ").getResultList();
+
+createQuery("from Student s where "+ "s.email LIKE '%luv2code.com' ").list();
+
+
+forEach loop:
+for(Student s: theStudents)
+sop(s);
+
+createQuery("update Student set email='foo@gmail.com' ").executeUpdate();
+
+
+// deelete
+createQuery(" delete from Student where id=2).executeUpdate();

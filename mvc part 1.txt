@@ -1,0 +1,47 @@
+development process:
+1.create a controller class:
+    annotate with @Controller;
+@Controller inherits from @Component.... supports scanning
+it is basically a special type of component
+2.define controller method
+actual method name is very flexible ... pass any no of parameters,session objectsor model objects and can
+also return different variations here.
+3.add Request Mapping to the controller method:
+ex:
+@RequestMapping("/")
+public String showPage()
+{
+return "main-menu";
+}
+prefix  view suffix
+/web-inf/views/main-menu.jsp
+4.return view name:
+5.develop view page:
+
+development process:
+1.create controller class:
+2.show html form :
+a> create acontroller method to show the html form
+b>create a view page for html form
+3.process html form
+cretae conreollr method
+develop view page for controller 
+
+Spring model
+The model is conatiner for ur apllication data;
+in ur controller
+u can put anything in the model
+strings,objects,info from database, etc//....
+your jsp page can access data from the model
+
+
+
+
+
+
+
+
+
+
+
+

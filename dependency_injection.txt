@@ -1,0 +1,30 @@
+Dependency Injection:
+the dependency inversion principle:
+The client delegates to call to another object the responsibility of providong its dependencies:
+
+dependency is same thing as "helper objects".
+demo example:
+now will also provide daily fortunes:
+this is dependency:
+new helper:FortuneService:
+This is a dependency;
+
+Injection Types:
+There are many types of injection with spring:
+constructore injection:
+setter injection:
+
+Develeopment  process:
+1.define the depedency interface and the class:
+2:create a constrctor n ur class for injection:
+3.configure the dependncy injection in spring config file:
+
+development process setter injection:
+1.create a setter method in your class for injections:
+2.configure the dependency injection in spring config file:
+
+Injecting values from properties file:
+1.create a prpoperties file:
+2.load properties file in spring config file:
+3.reference values from properties file
+
